@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 import logging
+import json
 
 from django.http import HttpResponse, QueryDict
 from django.views.decorators.csrf import csrf_exempt
@@ -14,6 +15,9 @@ from paypal.standard.models import DEFAULT_ENCODING
 from paypal.utils import warn_untested
 
 logger = logging.getLogger(__name__)
+
+# FOR DEBUGGING!
+from marto_python.collections import filter_json_encodable
 
 CONTENT_TYPE_ERROR = ("Invalid Content-Type - PayPal is only expected to use "
                       "application/x-www-form-urlencoded. If using django's "
@@ -88,6 +92,11 @@ def ipn(request):
 
     # Set query params and sender's IP address
     ipn_obj.initialize(request)
+
+    # FOR DEBUGGING!
+    ipn_obj.request_META = json.dumps(filter_json_encodable(request.META))
+    ipn_obj.request_POST = json.dumps(filter_json_encodable(request.POST))
+    ipn_obj.request_body = request.body
 
     if flag is not None:
         # We save errors in the flag field
