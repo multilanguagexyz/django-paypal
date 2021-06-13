@@ -17,7 +17,7 @@ from paypal.utils import warn_untested
 logger = logging.getLogger(__name__)
 
 # FOR DEBUGGING!
-from marto_python.collections import filter_json_encodable
+from marto_python.collection_utils import filter_json_encodable
 
 CONTENT_TYPE_ERROR = ("Invalid Content-Type - PayPal is only expected to use "
                       "application/x-www-form-urlencoded. If using django's "
