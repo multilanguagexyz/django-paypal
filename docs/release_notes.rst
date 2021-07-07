@@ -2,6 +2,24 @@
  Release notes
 ===============
 
+Version 1.1.1 (2021-04-08)
+--------------------------
+* Corrected PayPal URL used in IPN/PDT forms. This is a correction of the fix in
+  1.1 for POSTBACK_ENDPOINT, which wrongly changed both the IPN postback URL and
+  the PayPal login URL. The fix introduces a pair of new settings (LOGIN_URL and
+  SANDBOX_LOGIN_URL). The fix also changes the (undocumented) ``get_endpoint``
+  method on the PayPalPaymentsForm to ``get_login_url()``, in case you are
+  overriding that method.
+
+Version 1.1 (2021-03-14)
+------------------------
+
+* Fix PayPalSharedSecretEncryptedPaymentsForm in Python 3 - thanks Emilio Moretti
+* Dropped Python 3.4 support
+* Fixed some bugs with ``CreditCard.get_type()`` due to bad regexes
+* Fixed a bunch of warnings emitted under modern Django
+* Changed default values of POSTBACK_ENDPOINT and SANDBOX_POSTBACK_ENDPOINT to ones
+  now recommended by PayPal.
 
 Version 1.0 (2019-03-22)
 ------------------------
@@ -380,6 +398,3 @@ Version 0.1.3
 * Various bug fixes, including:
 
   * Fixes for non-ASCII characters
-
-
-

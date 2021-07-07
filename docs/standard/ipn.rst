@@ -35,7 +35,7 @@ Using PayPal Standard IPN
    ``PayPalPaymentsForm``.
 
    Please note: **This form is not used like a normal Django form** that posts
-   back to a Django view. Rather it is a GET form that has a single button
+   back to a Django view. Rather it is a POST form that has a single button
    which sends all the data to PayPal. You simply need to call ``render``
    on the instance in your template to write out the HTML, which includes
    the ``<form>`` tag with the correct endpoint.
@@ -43,8 +43,7 @@ Using PayPal Standard IPN
    ``views.py``:
 
    .. code-block:: python
-
-       from django.core.urlresolvers import reverse
+       from django.urls import reverse
        from django.shortcuts import render
        from paypal.standard.forms import PayPalPaymentsForm
 
@@ -94,11 +93,12 @@ Using PayPal Standard IPN
 
    .. code-block:: python
 
-       from django.conf.urls import url, include
+       from django.urls import path, include
 
        urlpatterns = [
-           url(r'^paypal/', include('paypal.standard.ipn.urls')),
+           path('paypal/', include("paypal.standard.ipn.urls")),
        ]
+
 
 5. Whenever an IPN is processed a signal will be sent with the result of the
    transaction.
@@ -110,10 +110,13 @@ Using PayPal Standard IPN
 
      This indicates a correct, non-duplicate IPN message from PayPal. The
      handler will receive a :class:`paypal.standard.ipn.models.PayPalIPN` object
-     as the sender. You will need to check the ``payment_status`` attribute, and
-     the ``business`` to make sure that the account receiving the payment
-     is the expected one, as well as other attributes to know what action to
-     take.
+     as the sender. **You must check**:
+
+     - the ``payment_status`` attribute,
+     - the ``business`` attribute to make sure that the account receiving the payment
+       is the expected one,
+     - the amount and currency (see example below),
+     - any other attributes relevant for your case
 
    * ``invalid_ipn_received``
 

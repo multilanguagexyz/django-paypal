@@ -13,8 +13,8 @@ warnings.simplefilter("always", DeprecationWarning)
 
 
 parser = argparse.ArgumentParser(description="Run the test suite, or specific tests specified using dotted paths.")
-parser.add_argument("--use-tz-false", action='store_true', default=False,
-                    help="Set USE_TZ=False in settings")
+parser.add_argument("--use-tz", action='store', default='true',
+                    help="Set USE_TZ in settings, 'true'/'false'")
 
 known_args, remaining_args = parser.parse_known_args()
 
@@ -33,6 +33,7 @@ settings_dict = dict(
     INSTALLED_APPS=[
         'django.contrib.auth',
         'django.contrib.admin',
+        'django.contrib.messages',
         'django.contrib.sessions',
         'django.contrib.contenttypes',
         'paypal.pro',
@@ -67,6 +68,7 @@ settings_dict = dict(
                     'django.template.context_processors.debug',
                     'django.template.context_processors.i18n',
                     'django.template.context_processors.media',
+                    'django.template.context_processors.request',
                     'django.template.context_processors.static',
                     'django.template.context_processors.tz',
                     'django.contrib.messages.context_processors.messages',
@@ -74,7 +76,7 @@ settings_dict = dict(
             },
         },
     ],
-    USE_TZ=not known_args.use_tz_false,
+    USE_TZ=not (known_args.use_tz == 'false'),
     LOGGING={
         'version': 1,
         'disable_existing_loggers': True,
@@ -89,6 +91,8 @@ settings_dict = dict(
             },
         },
     },
+    SECRET_KEY='required_by_django',
+    DEFAULT_AUTO_FIELD='django.db.models.BigAutoField',
     )
 
 settings.configure(**settings_dict)

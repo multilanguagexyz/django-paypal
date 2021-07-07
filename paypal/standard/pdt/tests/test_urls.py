@@ -1,6 +1,9 @@
 from __future__ import unicode_literals
 
-from django.conf.urls import url
+try:
+    from django.urls import re_path
+except ImportError:
+    from django.conf.urls import url as re_path
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
 
@@ -18,6 +21,7 @@ def pdt(request, template="pdt/pdt.html", context=None):
     context.update({"failed": failed, "pdt_obj": pdt_obj})
     return render(request, template, context)
 
+
 urlpatterns = [
-    url(r'^pdt/$', pdt),
+    re_path(r'^pdt/$', pdt),
 ]

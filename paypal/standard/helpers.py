@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import hashlib
 
+import six
 from django.conf import settings
 from django.utils.encoding import smart_str
 
@@ -9,8 +10,8 @@ from paypal.utils import warn_untested
 
 
 def get_sha1_hexdigest(salt, raw_password):
-    warn_untested()
-    return hashlib.sha1(smart_str(salt) + smart_str(raw_password)).hexdigest()
+    encoded_string = (smart_str(salt) + smart_str(raw_password)).encode('utf-8')
+    return hashlib.sha1(encoded_string).hexdigest()
 
 
 def duplicate_txn_id(ipn_obj):
@@ -43,7 +44,6 @@ def make_secret(form_instance, secret_fields=None):
     selection of variables in params. Should only be used with SSL.
 
     """
-    warn_untested()
     # @@@ Moved here as temporary fix to avoid dependancy on auth.models.
     # @@@ amount is mc_gross on the IPN - where should mapping logic go?
     # @@@ amount / mc_gross is not nessecarily returned as it was sent - how to use it? 10.00 vs. 10.0
@@ -57,13 +57,13 @@ def make_secret(form_instance, secret_fields=None):
     for name in secret_fields:
         if hasattr(form_instance, 'cleaned_data'):
             if name in form_instance.cleaned_data:
-                data += unicode(form_instance.cleaned_data[name])
+                data += six.text_type(form_instance.cleaned_data[name])
         else:
             # Initial data passed into the constructor overrides defaults.
             if name in form_instance.initial:
-                data += unicode(form_instance.initial[name])
+                data += six.text_type(form_instance.initial[name])
             elif name in form_instance.fields and form_instance.fields[name].initial is not None:
-                data += unicode(form_instance.fields[name].initial)
+                data += six.text_type(form_instance.fields[name].initial)
 
     secret = get_sha1_hexdigest(settings.SECRET_KEY, data)
     return secret
